@@ -1,0 +1,19 @@
+{
+  "name": "bellai-server",
+  "version": "1.0.0",
+  "description": "BELLAI Multi-AI Backend Server",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "vercel": "^35.0.0"
+  }
+}
