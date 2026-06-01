@@ -1087,8 +1087,7 @@ async function exportAs(type) {
         const rows = msgs.map(m => `
           <tr>
             <td style="width:80px;font-weight:bold;color:${m.role==='나'?'#6366f1':'#10b981'};vertical-align:top;padding:8px">${m.role}</td>
-            <td style="padding:8px;line-height:1.7">${m.text.replace(/
-/g,'<br/>')}</td>
+            <td style="padding:8px;line-height:1.7">${m.text.replace(/\n/g,'<br/>')}</td>
           </tr>`).join('');
 
         const html = `
