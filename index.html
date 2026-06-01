@@ -7,42 +7,37 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="manifest" href="/manifest.json"/>
 <!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyALyH50AJP1QQGlMqBy21YDn2Bn3vDRxbk",
     authDomain: "bellai-bd7d2.firebaseapp.com",
     projectId: "bellai-bd7d2",
     storageBucket: "bellai-bd7d2.firebasestorage.app",
     messagingSenderId: "409326132670",
-    appId: "1:409326132670:web:0d4f5bfd7118beb5c46def",
-    measurementId: "G-N472EEPCTY"
+    appId: "1:409326132670:web:0d4f5bfd7118beb5c46def"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+  firebase.initializeApp(firebaseConfig);
+  const _auth = firebase.auth();
+  const _db = firebase.firestore();
 
-  window.firebaseAuth = auth;
-  window.firebaseDb = db;
-  window.GoogleAuthProvider = GoogleAuthProvider;
-  window.signInWithPopup = signInWithPopup;
-  window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-  window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-  window.signOut = signOut;
-  window.onAuthStateChanged = onAuthStateChanged;
-  window.firestoreDoc = doc;
-  window.firestoreSet = setDoc;
-  window.firestoreGet = getDoc;
-  window.firestoreCollection = collection;
-  window.firestoreQuery = query;
-  window.firestoreWhere = where;
-  window.firestoreGetDocs = getDocs;
-  window.firestoreDelete = deleteDoc;
-  window.firestoreOrderBy = orderBy;
+  window.firebaseAuth = _auth;
+  window.firebaseDb = _db;
+  window.GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
+  window.signInWithPopup = (auth, provider) => auth.signInWithPopup(provider);
+  window.createUserWithEmailAndPassword = (auth, email, pw) => auth.createUserWithEmailAndPassword(email, pw);
+  window.signInWithEmailAndPassword = (auth, email, pw) => auth.signInWithEmailAndPassword(email, pw);
+  window.signOut = (auth) => auth.signOut();
+  window.onAuthStateChanged = (auth, cb) => auth.onAuthStateChanged(cb);
+  window.firestoreDoc = (db, ...args) => db.doc(args.join('/'));
+  window.firestoreSet = (ref, data) => ref.set(data);
+  window.firestoreGet = (ref) => ref.get();
+  window.firestoreCollection = (db, ...args) => db.collection(args.join('/'));
+  window.firestoreGetDocs = (ref) => ref.get();
   window.firebaseReady = true;
   window.dispatchEvent(new Event('firebaseReady'));
 </script>
@@ -1282,8 +1277,8 @@ function switchTab(tab) {
 
 async function googleLogin() {
   try {
-    const provider = new window.GoogleAuthProvider();
-    const result = await window.signInWithPopup(window.firebaseAuth, provider);
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const result = await firebase.auth().signInWithPopup(provider);
     onLoginSuccess(result.user);
   } catch(e) {
     document.getElementById('login-err').textContent = '구글 로그인 실패: ' + e.message;
@@ -1295,7 +1290,7 @@ async function emailAuth() {
   const pw = document.getElementById('login-pw').value;
   if (!email || !pw) { document.getElementById('login-err').textContent = '이메일과 비밀번호를 입력하세요'; return; }
   try {
-    const result = await window.signInWithEmailAndPassword(window.firebaseAuth, email, pw);
+    const result = await firebase.auth().signInWithEmailAndPassword(email, pw);
     onLoginSuccess(result.user);
   } catch(e) {
     document.getElementById('login-err').textContent = '로그인 실패: 이메일 또는 비밀번호를 확인하세요';
@@ -1308,7 +1303,7 @@ async function emailSignup() {
   if (!email || !pw) { document.getElementById('login-err').textContent = '이메일과 비밀번호를 입력하세요'; return; }
   if (pw.length < 6) { document.getElementById('login-err').textContent = '비밀번호는 6자 이상이어야 합니다'; return; }
   try {
-    const result = await window.createUserWithEmailAndPassword(window.firebaseAuth, email, pw);
+    const result = await firebase.auth().createUserWithEmailAndPassword(email, pw);
     onLoginSuccess(result.user);
   } catch(e) {
     document.getElementById('login-err').textContent = '회원가입 실패: 이미 사용 중인 이메일입니다';
@@ -1327,7 +1322,7 @@ function onLoginSuccess(user) {
 }
 
 async function logout() {
-  await window.signOut(window.firebaseAuth);
+  await firebase.auth().signOut();
   currentUser = null;
   conversations = {};
   currentId = null;
@@ -1353,9 +1348,8 @@ document.addEventListener('click', (e) => {
 async function saveConvToCloud(id) {
   if (!currentUser || !conversations[id]) return;
   try {
-    const db = window.firebaseDb;
-    const ref = window.firestoreDoc(db, 'users', currentUser.uid, 'conversations', id);
-    await window.firestoreSet(ref, {
+    const ref = firebase.firestore().collection('users').doc(currentUser.uid).collection('conversations').doc(id);
+    await ref.set({
       ...conversations[id],
       updatedAt: Date.now()
     });
@@ -1366,9 +1360,7 @@ async function saveConvToCloud(id) {
 async function loadUserConversations() {
   if (!currentUser) return;
   try {
-    const db = window.firebaseDb;
-    const colRef = window.firestoreCollection(db, 'users', currentUser.uid, 'conversations');
-    const snapshot = await window.firestoreGetDocs(colRef);
+    const snapshot = await firebase.firestore().collection('users').doc(currentUser.uid).collection('conversations').get();
     snapshot.forEach(doc => {
       conversations[doc.id] = doc.data();
     });
@@ -1386,7 +1378,7 @@ function saveConvs() {
 
 // 로그인 상태 감지
 window.addEventListener('firebaseReady', () => {
-  window.onAuthStateChanged(window.firebaseAuth, (user) => {
+  firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       onLoginSuccess(user);
     } else {
