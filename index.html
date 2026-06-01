@@ -676,6 +676,47 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   display:flex;align-items:center;justify-content:center;
 }
 
+/* ══ 로그인 모달 — B안 글로우 퍼플 ══ */
+#login-modal{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(5,3,20,.92);backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+.login-card{
+  background:#0d0b1a;
+  border:1px solid rgba(124,106,247,.25);
+  border-radius:24px;padding:36px 28px;width:100%;max-width:380px;
+  display:flex;flex-direction:column;gap:0;
+  position:relative;overflow:hidden;
+}
+.login-card::before{
+  content:'';position:absolute;top:-60px;left:50%;
+  transform:translateX(-50%);
+  width:200px;height:140px;
+  background:rgba(124,106,247,.2);
+  border-radius:50%;filter:blur(40px);
+  pointer-events:none;
+}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:20px;position:relative}
+.login-logo-name{font-size:20px;font-weight:600;color:#fff;letter-spacing:1px}
+.login-title{font-size:22px;font-weight:600;color:#fff;margin-bottom:6px;position:relative}
+.login-sub{font-size:13px;color:rgba(200,180,255,.5);margin-bottom:24px;line-height:1.6;position:relative}
+.login-tabs{display:flex;gap:0;margin-bottom:20px;background:rgba(124,106,247,.1);border-radius:8px;padding:3px;position:relative;border:1px solid rgba(124,106,247,.2)}
+.login-tab{flex:1;padding:7px;border:none;background:none;border-radius:6px;font-size:13px;color:rgba(200,180,255,.5);cursor:pointer;font-family:var(--font);transition:all .15s}
+.login-tab.active{background:rgba(124,106,247,.3);color:#fff;font-weight:500}
+.login-form{display:flex;flex-direction:column;gap:10px;position:relative}
+.login-input{background:rgba(124,106,247,.08);border:1px solid rgba(124,106,247,.25);border-radius:10px;padding:11px 14px;font-size:14px;color:#fff;font-family:var(--font);outline:none;transition:border-color .15s;width:100%}
+.login-input::placeholder{color:rgba(200,180,255,.35)}
+.login-input:focus{border-color:rgba(124,106,247,.6);background:rgba(124,106,247,.12)}
+.login-btn{padding:12px;border-radius:10px;border:none;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font);transition:opacity .15s;width:100%}
+.login-btn.primary{background:#7c6af7;color:#fff;box-shadow:0 4px 20px rgba(124,106,247,.3)}
+.login-btn.primary:hover{opacity:.9}
+.login-btn.google{background:transparent;border:1px solid rgba(124,106,247,.3);color:rgba(200,180,255,.7);display:flex;align-items:center;justify-content:center;gap:8px}
+.login-btn.google:hover{background:rgba(124,106,247,.1);border-color:rgba(124,106,247,.5)}
+.login-divider{display:flex;align-items:center;gap:10px;margin:4px 0;font-size:12px;color:rgba(124,106,247,.35)}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:rgba(124,106,247,.2)}
+.login-err{font-size:12px;color:#f87171;text-align:center;min-height:16px}
 </style>
 </head>
 <body>
