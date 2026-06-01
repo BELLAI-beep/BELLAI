@@ -7,12 +7,5 @@
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/(.*)", "dest": "/public/$1" }
-  ],
-  "env": {
-    "CLAUDE_API_KEY": "@claude_api_key",
-    "GPT_API_KEY": "@gpt_api_key",
-    "GEMINI_API_KEY": "@gemini_api_key",
-    "DEEPSEEK_API_KEY": "@deepseek_api_key",
-    "GROQ_API_KEY": "@groq_api_key"
-  }
-}
+  ]
+}  
