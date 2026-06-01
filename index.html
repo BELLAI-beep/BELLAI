@@ -1494,7 +1494,7 @@ $('sidebarOverlay')?.addEventListener('click', () => {
   const available = await fetchAvailableAIs();
 
   if (available.length > 0) {
-    activeAIs = available;
+    activeAIs = [...available];
     $('connDot').style.background = '#22c55e';
     $('connTxt').textContent = `${available.length}개 AI 연결됨`;
     buildAIToggles();
@@ -2238,7 +2238,7 @@ function fileToBase64(file) {
 async function sendMessage() {
   const text = $('userInput').value.trim();
   if ((!text && !attachedFile) || isLoading || !currentId) return;
-  if (!activeAIs.some(id=>keys[id])) { addSys('⚠ 선택된 AI에 API 키가 없습니다'); return; }
+  if (!activeAIs.length) { addSys('⚠ AI가 선택되지 않았습니다'); return; }
 
   isLoading = true;
   $('sendBtn').disabled = true;
@@ -2272,7 +2272,7 @@ async function sendMessage() {
 
   // DEBATE MODE (토론 → 검토 → 최종 도출)
   if (compareMode && activeAIs.filter(id=>keys[id]).length > 1) {
-    const validAIs = activeAIs.filter(id=>keys[id]);
+    const validAIs = [...activeAIs];
     const msgs = conv.history.slice(0,-1).map(m=>({role:m.role,content:m.content}));
     msgs.push({role:'user',content:finalContent});
 
@@ -2339,7 +2339,7 @@ async function sendMessage() {
 
   } else {
     // SINGLE MODE — 스마트 라우팅으로 최적 AI 자동 선택
-    const validAIs = activeAIs.filter(id=>keys[id]);
+    const validAIs = [...activeAIs];
     const route = smartRoute(text, validAIs);
     const aiId = route.ai;
     const cfg = AI_CONFIG[aiId];
