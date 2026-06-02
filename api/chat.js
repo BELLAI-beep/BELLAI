@@ -10,7 +10,7 @@ let modelCache = {
   models: {
     claude:   'claude-sonnet-latest',   // Anthropic 자동 최신화
     gpt:      'gpt-4o',
-    gemini:   'gemini-2.0-flash',
+    gemini:   'gemini-2.0-flash', // Google 자동 최신화
     deepseek: 'deepseek-chat',
     groq:     'llama-3.3-70b-versatile',
   grok:     'grok-latest',
