@@ -840,21 +840,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     <button id="menuBtn"><i class="ti ti-menu-2"></i></button>
     <div id="chat-title-wrap">
       <div id="chat-title">BELLAI</div>
-      <div id="active-ais"></div>
+      <div id="active-ais"><span style="font-size:11px;color:#a78bfa;font-family:var(--mono)">⚡ BELLAI 자동 최적 배분</span></div>
     </div>
-    <button class="hbtn" id="aiSelectorBtn" title="AI 선택"><i class="ti ti-robot"></i> AI 선택</button>
-    <div class="export-wrap">
-      <button class="hbtn" id="exportBtn" title="내보내기"><i class="ti ti-download"></i> 내보내기</button>
-      <div class="export-menu" id="exportMenu">
-        <button class="export-item" onclick="exportAs('pdf')"><i class="ti ti-file-type-pdf" style="color:#f87171"></i>PDF 저장<span class="ext">.pdf</span></button>
-        <button class="export-item" onclick="exportAs('word')"><i class="ti ti-file-type-doc" style="color:#60a5fa"></i>Word 저장<span class="ext">.docx</span></button>
-        <button class="export-item" onclick="exportAs('ppt')"><i class="ti ti-presentation" style="color:#fb923c"></i>PPT 저장<span class="ext">.pptx</span></button>
-        <button class="export-item" onclick="exportAs('excel')"><i class="ti ti-file-type-xls" style="color:#4ade80"></i>Excel 저장<span class="ext">.xlsx</span></button>
-        <div class="export-divider"></div>
-        <button class="export-item" onclick="exportAs('png')"><i class="ti ti-photo" style="color:#c084fc"></i>이미지 저장<span class="ext">.png</span></button>
-        <button class="export-item" onclick="exportAs('md')"><i class="ti ti-markdown" style="color:#94a3b8"></i>텍스트 저장<span class="ext">.md</span></button>
-      </div>
-    </div>
+
+
     <button class="hbtn" id="clearBtn" title="초기화"><i class="ti ti-trash"></i></button>
     <div id="user-menu">
       <div class="user-avatar" id="userAvatar" onclick="toggleUserMenu()">?</div>
@@ -973,16 +962,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   <!-- WELCOME (빈 채팅 시작 화면) -->
   <div id="welcome"></div>
 
-  <!-- AI SELECTOR -->
-  <div id="ai-selector">
-    <div class="ai-select-label">응답할 AI 선택 (복수 선택 가능)</div>
-    <div class="ai-toggles" id="ai-toggles"></div>
-  </div>
 
-  <!-- COMPARE MODE BAR -->
+
   <div class="compare-mode-bar" id="compareModeBar">
     <i class="ti ti-git-compare"></i>
-    토론 모드 — AI 병렬 토론 · 자동 최신 모델 적용 · 최적 답변 도출
+    BELLAI 토론 모드 — 질문 유형 자동 감지 · AI 역할 분담 · 3라운드 토론 · 최적 답변 1개 도출
   </div>
 
   <!-- MESSAGES -->
@@ -990,7 +974,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
   <!-- TOOLBAR -->
   <div id="toolbar">
-    <button class="tbtn" id="searchBtn"><i class="ti ti-world-search"></i> 웹 검색</button>
     <button class="tbtn" id="fileBtn"><i class="ti ti-paperclip"></i> 파일 첨부</button>
     <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.md"/>
     <button class="tbtn" id="voiceBtn" title="음성 입력"><i class="ti ti-microphone"></i> 음성</button>
@@ -1006,7 +989,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
         <button id="sendBtn" disabled><i class="ti ti-send"></i></button>
       </div>
     </div>
-    <div id="hint">Enter 전송 · Shift+Enter 줄바꿈 · <span id="compare-hint" style="color:#a78bfa">⊕ 비교 모드로 여러 AI 동시 비교 가능</span></div>
+    <div id="hint">Enter 전송 · Shift+Enter 줄바꿈 · <span id="compare-hint" style="color:#a78bfa">⊕ 토론 모드로 AI들이 협력해 최선의 답변 도출</span></div>
   </div>
 
 </div>
@@ -1023,25 +1006,49 @@ const AI_CONFIG = {
   grok:     { name:'Grok',      color:'#10b8d4', cls:'grok',     icon:'Gk', model:'grok-latest',                  specialty:['실시간정보','뉴스','트위터','웹검색','최신'] },
 };
 
-// ── 스마트 라우팅: 질문 유형별 최적 AI 자동 선택 ──
-function smartRoute(question, availableAIs) {
-  const q = question.toLowerCase();
+// ── 역할 분담 자동 조합 ──
+// 질문 유형 감지 → 최적 AI 조합 반환
+function getDebateTeam(question, availableAIs) {
+  const q = (question||'').toLowerCase();
 
-  const ROUTING_RULES = [
-    { keywords:['코드','코딩','프로그래밍','javascript','python','java','sql','버그','오류','error','function','class','api','개발'], ai:'gpt',      reason:'코딩·개발 질문' },
-    { keywords:['최신','뉴스','오늘','지금','현재','트렌드','2025','2026','최근','실시간','날씨','주가','환율'], ai:'gemini',   reason:'최신정보 검색' },
-    { keywords:['수학','계산','공식','방정식','논리','증명','통계','확률','알고리즘'], ai:'deepseek', reason:'수학·논리 추론' },
-    { keywords:['빠르게','간단히','한줄로','요약만','짧게'], ai:'groq',     reason:'빠른 답변' },
-    { keywords:['보고서','분석','전략','기획','인력','배치','운영','계획','한국어'], ai:'claude',   reason:'분석·한국어' },
-  ];
-
-  for (const rule of ROUTING_RULES) {
-    if (rule.keywords.some(k => q.includes(k)) && availableAIs.includes(rule.ai)) {
-      return { ai: rule.ai, reason: rule.reason };
-    }
+  // 빠른 답변 단독 처리 (토론 불필요)
+  if (['빠르게','간단히','한줄로','요약만','짧게'].some(k=>q.includes(k))) {
+    const solo = availableAIs.find(a=>a==='groq') || availableAIs[0];
+    return { team:[solo], lead:solo, mode:'single', reason:'빠른 단독 답변' };
   }
-  // 기본값: 첫 번째 유효 AI
-  return { ai: availableAIs[0], reason: '기본 라우팅' };
+
+  // 코딩·개발 → GPT 주도 + DeepSeek 검증
+  if (['코드','코딩','프로그래밍','javascript','python','java','sql','버그','오류','error','function','class','api','개발'].some(k=>q.includes(k))) {
+    const team = ['gpt','deepseek','claude'].filter(a=>availableAIs.includes(a));
+    return { team, lead:'gpt', mode:'debate', reason:'코딩·개발 — GPT 주도·DeepSeek 검증' };
+  }
+
+  // 수학·논리 → DeepSeek 주도 + GPT 검증
+  if (['수학','계산','공식','방정식','논리','증명','통계','확률','알고리즘'].some(k=>q.includes(k))) {
+    const team = ['deepseek','gpt','claude'].filter(a=>availableAIs.includes(a));
+    return { team, lead:'deepseek', mode:'debate', reason:'수학·논리 — DeepSeek 주도·GPT 검증' };
+  }
+
+  // 분석·문서·한국어 → Claude 주도 + GPT 보완
+  if (['보고서','분석','전략','기획','인력','배치','운영','계획','한국어','문서','작성','초안'].some(k=>q.includes(k))) {
+    const team = ['claude','gpt','deepseek'].filter(a=>availableAIs.includes(a));
+    return { team, lead:'claude', mode:'debate', reason:'분석·문서 — Claude 주도·GPT 보완' };
+  }
+
+  // 최신정보·뉴스 → Groq 주도 + Claude 취합
+  if (['최신','뉴스','오늘','지금','현재','트렌드','실시간','날씨','주가','환율'].some(k=>q.includes(k))) {
+    const team = ['groq','claude','gpt'].filter(a=>availableAIs.includes(a));
+    return { team, lead:'groq', mode:'debate', reason:'최신정보 — Groq 주도·Claude 취합' };
+  }
+
+  // 일반 → 전체 AI 토론
+  return { team:[...availableAIs], lead:availableAIs[0], mode:'debate', reason:'전체 AI 토론' };
+}
+
+// 하위 호환용 (단일 AI 선택 시 사용)
+function smartRoute(question, availableAIs) {
+  const r = getDebateTeam(question, availableAIs);
+  return { ai: r.lead, reason: r.reason };
 }
 
 // ── 모델 버전 체크 (시작 시 최신 여부 표시) ──
@@ -1061,7 +1068,7 @@ let activeAIs = [];
 let conversations = {};
 let currentId = null;
 let compareMode = true;
-let webSearchOn = false;
+let webSearchOn = false; // 웹검색 버튼 제거됨, 항상 false 유지
 let attachedFile = null;
 let isLoading = false;
 
@@ -2062,7 +2069,7 @@ function rateAI(aiId, isGood) {
   sessionStorage.setItem('bellai_ratings', JSON.stringify(aiRatings));
 }
 
-// ── 음성 입력 ──
+// ── 음성 입력 (다국어 자동 감지) ──
 let recognition = null;
 let isListening = false;
 
@@ -2070,9 +2077,10 @@ function initVoice() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) return false;
   recognition = new SpeechRecognition();
-  recognition.lang = 'ko-KR';
+  recognition.lang = '';          // 빈 문자열 = 브라우저 자동 감지
   recognition.continuous = false;
   recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
 
   recognition.onresult = (e) => {
     const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
@@ -2278,17 +2286,21 @@ async function sendMessage() {
   conv.ais = [...activeAIs];
   clearAttached();
 
-  // DEBATE MODE (토론 → 검토 → 최종 도출)
-  if (compareMode && activeAIs.filter(id=>keys[id]).length > 1) {
-    const validAIs = [...activeAIs];
+  // ━━ 자동 팀 구성 ━━
+  const debateInfo = getDebateTeam(text || dispText, activeAIs);
+  const validAIs = debateInfo.team.filter(id => activeAIs.includes(id));
+  const useSingle = debateInfo.mode === 'single' || validAIs.length < 2;
+
+  // DEBATE MODE
+  if (compareMode && !useSingle) {
     const msgs = conv.history.slice(0,-1).map(m=>({role:m.role,content:m.content}));
     msgs.push({role:'user',content:finalContent});
 
-    // 진행 상태 표시
     const progressEl = addProgress();
+    addSys(`🎯 ${debateInfo.reason} (${validAIs.map(a=>AI_CONFIG[a].name).join(' · ')})`);
 
-    // ━━ 1단계: 병렬 독립 답변 ━━
-    updateProgress(progressEl, '1단계: AI 독립 답변 수집 중...', 20);
+    // ━━ 1라운드: 독립 답변 ━━
+    updateProgress(progressEl, `1라운드: ${validAIs.map(a=>AI_CONFIG[a].name).join('·')} 독립 답변 수집 중...`, 15);
     const round1 = await Promise.all(
       validAIs.map(async aiId => {
         try {
@@ -2301,40 +2313,59 @@ async function sendMessage() {
     );
     const validR1 = round1.filter(r=>r.ok);
 
-    // ━━ 2단계: 병렬 상호 검토 ━━
+    // ━━ 2라운드: 상호 반박·보완 ━━
     let round2 = [];
     if (validR1.length > 1) {
-      updateProgress(progressEl, '2단계: AI 상호 검토 및 보완 중...', 55);
-      const othersText = validR1.map(r=>`[${AI_CONFIG[r.ai].name}의 답변]\n${r.text}`).join('\n\n');
+      updateProgress(progressEl, '2라운드: AI 상호 반박·보완 중...', 40);
       round2 = await Promise.all(
         validR1.map(async r => {
-          const reviewPrompt = `다음은 "${finalContent}"라는 질문에 대한 여러 AI의 답변입니다.\n\n${othersText}\n\n당신(${AI_CONFIG[r.ai].name})의 관점에서 다른 AI 답변과 비교하여: 1) 동의하는 부분 2) 보완할 점 3) 추가 인사이트를 간결하게 제시하세요. (150자 이내)`;
+          const othersText = validR1
+            .filter(o=>o.ai!==r.ai)
+            .map(o=>`[${AI_CONFIG[o.ai].name} 답변]\n${o.text}`)
+            .join('\n\n');
+          const prompt = `[원래 질문]\n${finalContent}\n\n[다른 AI들의 답변]\n${othersText}\n\n위 답변들을 검토하고: 1) 오류나 부정확한 부분 지적 2) 동의하는 핵심 인정 3) 본인만의 추가 인사이트 제시 (200자 이내)`;
           try {
-            const rv = await callAI(r.ai, [{role:'user',content:reviewPrompt}], false);
-            return { ai:r.ai, text:rv.text };
+            const rv = await callAI(r.ai, [{role:'user',content:prompt}], false);
+            return { ai:r.ai, text:rv.text, ok:true };
           } catch(e) {
-            return { ai:r.ai, text:'검토 생략' };
+            return { ai:r.ai, text:'검토 생략', ok:false };
           }
         })
       );
     }
 
-    // ━━ 3단계: 스마트 라우팅으로 최적 AI가 도출 ━━
-    updateProgress(progressEl, '3단계: 최적 답변 도출 중...', 85);
-    const route = smartRoute(text || finalContent, validAIs);
-    const synthAI = keys[route.ai] ? route.ai : validAIs.find(id=>keys[id]);
+    // ━━ 3라운드: 재반론·최종 입장 ━━
+    let round3 = [];
+    if (round2.filter(r=>r.ok).length > 1) {
+      updateProgress(progressEl, '3라운드: 재반론·최종 입장 정리 중...', 65);
+      round3 = await Promise.all(
+        validR1.map(async r => {
+          const reviewsOnMe = round2
+            .filter(rv=>rv.ai!==r.ai&&rv.ok)
+            .map(rv=>`[${AI_CONFIG[rv.ai].name}의 검토]\n${rv.text}`)
+            .join('\n\n');
+          if (!reviewsOnMe) return { ai:r.ai, text:'', ok:false };
+          const prompt = `[나의 원래 답변]\n${r.text}\n\n[다른 AI들의 검토·반박]\n${reviewsOnMe}\n\n타당한 지적은 수용하고, 동의할 수 없는 부분은 근거를 들어 재반론하여 최종 입장을 한 문단으로 정리하세요. (150자 이내)`;
+          try {
+            const rv = await callAI(r.ai, [{role:'user',content:prompt}], false);
+            return { ai:r.ai, text:rv.text, ok:true };
+          } catch(e) {
+            return { ai:r.ai, text:'', ok:false };
+          }
+        })
+      );
+    }
+
+    // ━━ BELLAI 최종 취합 (리드 AI 담당) ━━
+    updateProgress(progressEl, 'BELLAI 최종 취합 중...', 85);
+    const synthAI = validAIs.includes(debateInfo.lead) ? debateInfo.lead : validAIs[0];
     let final = null;
     try {
-      const debateSummary = [
-        `[원래 질문] ${finalContent}`,
-        `\n[1단계 - 각 AI 독립 답변]`,
-        ...validR1.map(r=>`${AI_CONFIG[r.ai].name}: ${r.text}`),
-        round2.length ? `\n[2단계 - 상호 검토]` : '',
-        ...round2.map(r=>`${AI_CONFIG[r.ai].name} 검토: ${r.text}`)
-      ].filter(Boolean).join('\n');
-
-      const finalPrompt = `위의 AI들의 토론 내용을 바탕으로, 가장 정확하고 완전하며 실용적인 최종 답변을 한국어로 작성하세요. 각 AI의 좋은 점을 통합하고 오류는 제거하여 명확한 하나의 답변을 도출하세요.\n\n${debateSummary}`;
-      const fr = await callAI(synthAI, [{role:'user',content:finalPrompt}], false);
+      const r1s = validR1.map(r=>`${AI_CONFIG[r.ai].name} 독립 답변:\n${r.text}`).join('\n\n');
+      const r2s = round2.filter(r=>r.ok).map(r=>`${AI_CONFIG[r.ai].name} 반박·보완:\n${r.text}`).join('\n\n');
+      const r3s = round3.filter(r=>r.ok&&r.text).map(r=>`${AI_CONFIG[r.ai].name} 최종 입장:\n${r.text}`).join('\n\n');
+      const synthPrompt = `[원래 질문]\n${finalContent}\n\n[1라운드 독립 답변]\n${r1s}\n\n${r2s?'[2라운드 반박·보완]\n'+r2s+'\n\n':''}${r3s?'[3라운드 최종 입장]\n'+r3s+'\n\n':''}위 AI 토론 전체를 분석하여 가장 정확하고 수준 높은 최종 답변을 한국어로 작성하세요. 정확한 정보만 포함하고 완결된 형태로 제공하세요.`;
+      const fr = await callAI(synthAI, [{role:'user',content:synthPrompt}], false);
       final = fr.text;
     } catch(e){ final = validR1[0]?.text || '답변 생성 실패'; }
 
@@ -2342,28 +2373,26 @@ async function sendMessage() {
     await new Promise(r=>setTimeout(r,300));
     removeProgress(progressEl);
 
-    addDebateResult(round1, round2, final);
-    conv.history.push({ role:'assistant', content:final, _compare:true, _results:round1, _reviews:round2, _best:final });
+    addDebateResult(round1, round2, round3, final);
+    conv.history.push({ role:'assistant', content:final, _compare:true, _results:round1, _reviews:round2, _round3:round3, _best:final });
 
   } else {
-    // SINGLE MODE — 스마트 라우팅으로 최적 AI 자동 선택
-    const validAIs = [...activeAIs];
-    const route = smartRoute(text, validAIs);
-    const aiId = route.ai;
-    const cfg = AI_CONFIG[aiId];
+    // SINGLE MODE
+    const soloAI = useSingle ? (debateInfo.team[0] || activeAIs[0]) : activeAIs[0];
+    const cfg = AI_CONFIG[soloAI];
     showTyping(cfg.icon);
-    // 라우팅 이유 표시
-    addSys(`🎯 ${cfg.name} 선택 (${route.reason}) · 모델 자동 최신화 적용`);
+    addSys(`⚡ ${cfg.name} 단독 답변 (${debateInfo.reason})`);
+
     try {
       const msgs = conv.history.slice(0,-1).map(m=>({role:m.role,content:m.content}));
       msgs.push({role:'user',content:finalContent});
-      const r = await callAI(aiId, msgs, webSearchOn && aiId==='claude');
+      const r = await callAI(soloAI, msgs, webSearchOn && soloAI==='claude');
       hideTyping();
-      addMsg('bot', r.text, aiId, r.searched);
-      conv.history.push({ role:'assistant', content:r.text, _ai:aiId, _searched:r.searched });
+      addMsg('bot', r.text, soloAI, r.searched);
+      conv.history.push({ role:'assistant', content:r.text, _ai:soloAI, _searched:r.searched });
     } catch(e) {
       hideTyping();
-      addMsg('bot', `❌ ${cfg.name} 오류: ${e.message}`, aiId);
+      addMsg('bot', `❌ ${cfg.name} 오류: ${e.message}`, soloAI);
     }
   }
 
@@ -2383,11 +2412,7 @@ function clearAttached() {
 // ── EVENTS ──
 $('newChatBtn').addEventListener('click', () => { newChat(); });
 
-$('aiSelectorBtn').addEventListener('click', () => {
-  const sel = $('ai-selector');
-  const isShown = sel.style.display === 'flex';
-  sel.style.display = isShown ? 'none' : 'flex';
-});
+
 
 $('compareBtn').addEventListener('click', () => {
   compareMode = !compareMode;
@@ -2395,10 +2420,7 @@ $('compareBtn').addEventListener('click', () => {
   $('compareModeBar').classList.toggle('show', compareMode);
 });
 
-$('searchBtn').addEventListener('click', () => {
-  webSearchOn = !webSearchOn;
-  $('searchBtn').classList.toggle('on', webSearchOn);
-});
+
 
 $('fileBtn').addEventListener('click', () => $('fileInput').click());
 
@@ -2441,11 +2463,7 @@ $('userInput').addEventListener('input', () => {
   $('userInput').style.height = Math.min($('userInput').scrollHeight,120)+'px';
 });
 
-$('exportBtn')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  $('exportMenu').classList.toggle('show');
-});
-document.addEventListener('click', () => $('exportMenu')?.classList.remove('show'));
+
 
 $('clearBtn').addEventListener('click', () => {
   if (!currentId) return;
