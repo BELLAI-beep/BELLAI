@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════════
-// BELLAI Backend — api/chat.js  v7
+// BELLAI Backend — api/chat.js  v8
 // 자동 최신 모델 감지 + 스마트 라우팅 + 토론 모드
+// Gemini 제거됨
 // ═══════════════════════════════════════════════
 
 const SYSTEM = `당신의 이름은 BELLAI입니다. 친절하고 유능한 AI 어시스턴트로, 한국어로 대화합니다. 전문적이면서도 친근한 톤을 유지합니다.`;
@@ -8,12 +9,11 @@ const SYSTEM = `당신의 이름은 BELLAI입니다. 친절하고 유능한 AI �
 // ── 모델 캐시 (24시간 유지) ──
 let modelCache = {
   models: {
-    claude:   'claude-sonnet-latest',   // Anthropic 자동 최신화
+    claude:   'claude-sonnet-latest',
     gpt:      'gpt-4o',
-    gemini:   'gemini-2.0-flash', // Google 자동 최신화
     deepseek: 'deepseek-chat',
     groq:     'llama-3.3-70b-versatile',
-  grok:     'grok-latest',
+    grok:     'grok-latest',
   },
   lastChecked: 0,
 };
@@ -31,11 +31,12 @@ const GROQ_PRIORITY = [
   'llama-3.1-70b-versatile','mixtral-8x7b-32768',
 ];
 
-// ── DeepSeek 최신 모델 우선순위 ──
+// ── Grok 최신 모델 우선순위 ──
 const GROK_PRIORITY = [
   'grok-4','grok-3','grok-2','grok-latest',
 ];
 
+// ── DeepSeek 최신 모델 우선순위 ──
 const DEEPSEEK_PRIORITY = [
   'deepseek-r2','deepseek-v3','deepseek-chat','deepseek-reasoner',
 ];
@@ -127,7 +128,7 @@ function smartRoute(question, availableAIs) {
   const q = (question || '').toLowerCase();
   const RULES = [
     { keywords: ['코드','코딩','프로그래밍','javascript','python','java','sql','버그','function','class','개발','script'], ai: 'gpt' },
-    { keywords: ['최신','뉴스','오늘','지금','현재','트렌드','2025','2026','실시간','날씨','주가'], ai: 'gemini' },
+    { keywords: ['최신','뉴스','오늘','지금','현재','트렌드','2025','2026','실시간','날씨','주가'], ai: 'grok' },
     { keywords: ['수학','계산','공식','방정식','논리','증명','통계','알고리즘','확률'], ai: 'deepseek' },
     { keywords: ['빠르게','간단히','한줄','요약만','짧게','간단하게'], ai: 'groq' },
     { keywords: ['보고서','분석','전략','기획','인력','배치','운영','계획','한국어','문서'], ai: 'claude' },
@@ -178,26 +179,6 @@ async function callGPT(messages, models) {
   return { text: d.choices[0].message.content, searched: false };
 }
 
-async function callGemini(messages, models) {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) throw new Error('Gemini API 키 미설정');
-  const contents = messages.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: extractText(m.content) }],
-  }));
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents, systemInstruction: { parts: [{ text: SYSTEM }] } }),
-    }
-  );
-  const d = await res.json();
-  if (d.error) throw new Error(d.error.message);
-  return { text: d.candidates[0].content.parts[0].text, searched: false };
-}
-
 async function callOpenAICompat(messages, model, baseURL, key) {
   const msgs = [{ role: 'system', content: SYSTEM }, ...messages.map(m => ({ role: m.role, content: extractText(m.content) }))];
   const res = await fetch(`${baseURL}/chat/completions`, {
@@ -214,7 +195,6 @@ async function callAI(aiId, messages, models, useSearch = false) {
   switch (aiId) {
     case 'claude':   return callClaude(messages, models, useSearch);
     case 'gpt':      return callGPT(messages, models);
-    case 'gemini':   return callGemini(messages, models);
     case 'deepseek': return callOpenAICompat(messages, models.deepseek, 'https://api.deepseek.com/v1', process.env.DEEPSEEK_API_KEY);
     case 'groq':     return callOpenAICompat(messages, models.groq, 'https://api.groq.com/openai/v1', process.env.GROQ_API_KEY);
     case 'grok':     return callOpenAICompat(messages, models.grok, 'https://api.x.ai/v1', process.env.GROK_API_KEY);
@@ -223,8 +203,13 @@ async function callAI(aiId, messages, models, useSearch = false) {
 }
 
 function getAvailableAIs() {
-  return Object.entries({ claude:'CLAUDE_API_KEY', gpt:'GPT_API_KEY', gemini:'GEMINI_API_KEY', deepseek:'DEEPSEEK_API_KEY', groq:'GROQ_API_KEY', grok:'GROK_API_KEY' })
-    .filter(([, env]) => process.env[env]).map(([id]) => id);
+  return Object.entries({
+    claude:   'CLAUDE_API_KEY',
+    gpt:      'GPT_API_KEY',
+    deepseek: 'DEEPSEEK_API_KEY',
+    groq:     'GROQ_API_KEY',
+    grok:     'GROK_API_KEY',
+  }).filter(([, env]) => process.env[env]).map(([id]) => id);
 }
 
 // ════════════════════════════════════════════════
@@ -300,17 +285,8 @@ export default async function handler(req, res) {
         );
       }
 
-      // 3단계: 스마트 라우팅으로 최적 AI가 최종 도출
+      // 3단계: BELLAI 최종 취합 (Claude 담당)
       const synthAI = smartRoute(question, validAIs);
-      const debateSummary = [
-        `[질문] ${question}`,
-        `\n[1단계 독립 답변]`,
-        ...validR1.map(r => `${r.ai}(${r.model}): ${r.text}`),
-        round2.length ? `\n[2단계 상호 검토]` : '',
-        ...round2.map(r => `${r.ai} 검토: ${r.text}`),
-      ].filter(Boolean).join('\n');
-
-      // BELLAI 취합 프롬프트 (Claude가 취합 담당)
       const bellaiSynthPrompt = `당신은 BELLAI입니다. 여러 AI들의 토론 결과를 분석하고 최고의 답변을 취합하는 역할입니다.
 
 [질문]
