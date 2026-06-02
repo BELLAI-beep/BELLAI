@@ -967,7 +967,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       </div>
 
     </div>
-    <button class="setup-start-btn" id="startBtn" disabled>BELLAI 시작하기 →</button>
+    <button class="setup-start-btn" id="startBtn">BELLAI 시작하기 →</button>
   </div>
 
   <!-- WELCOME -->
@@ -1474,6 +1474,14 @@ document.getElementById('login-pw')?.addEventListener('keydown', (e) => {
 });
 
 async function init() {
+  // 3초 후 자동 시작 (서버 응답 없어도)
+  setTimeout(() => {
+    const btn = $('startBtn');
+    if (btn && btn.disabled) {
+      btn.disabled = false;
+      btn.textContent = 'BELLAI 시작하기 →';
+    }
+  }, 3000);
   try {
     const c = sessionStorage.getItem('bellai_convs');
     if (c) conversations = JSON.parse(c);
