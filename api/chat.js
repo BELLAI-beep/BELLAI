@@ -9,7 +9,7 @@ const SYSTEM = `당신의 이름은 BELLAI입니다. 친절하고 유능한 AI �
 // ── 모델 캐시 (24시간 유지) ──
 let modelCache = {
   models: {
-    claude:   'claude-sonnet-latest',
+    claude:   'claude-sonnet-4-5',
     gpt:      'gpt-4o',
     deepseek: 'deepseek-chat',
     groq:     'llama-3.3-70b-versatile',
