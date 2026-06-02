@@ -310,14 +310,37 @@ export default async function handler(req, res) {
         ...round2.map(r => `${r.ai} 검토: ${r.text}`),
       ].filter(Boolean).join('\n');
 
-      const finalPrompt = `위 AI들의 토론을 바탕으로 가장 정확하고 실용적인 최종 답변을 한국어로 작성하세요.\n\n${debateSummary}`;
-      const finalResult = await callAI(synthAI, [{ role:'user', content:finalPrompt }], models, false);
+      // BELLAI 취합 프롬프트 (Claude가 취합 담당)
+      const bellaiSynthPrompt = `당신은 BELLAI입니다. 여러 AI들의 토론 결과를 분석하고 최고의 답변을 취합하는 역할입니다.
+
+[질문]
+${question}
+
+[AI 토론 결과]
+${validR1.map(r => `## ${r.ai.toUpperCase()} 답변\n${r.text}`).join('\n\n')}
+${round2.length ? '\n[상호 검토]\n' + round2.map(r => `${r.ai}: ${r.text}`).join('\n') : ''}
+
+위 AI들의 답변을 종합 분석하여 다음 형식으로 최종 답변을 작성하세요:
+
+**BELLAI 최종 답변**
+
+[핵심 결론을 먼저 명확하게]
+
+[상세 설명 - AI들이 공통으로 동의한 내용 중심으로]
+
+**AI 의견 요약**
+- 동의한 내용: [공통 의견]
+- 추가 인사이트: [보완 내용]
+
+자연스럽고 친근한 한국어로 작성하세요.`;
+
+      const finalResult = await callAI('claude', [{ role:'user', content:bellaiSynthPrompt }], models, false);
 
       return res.json({
         mode: 'debate',
         round1,
         round2,
-        final: { ai:synthAI, model:models[synthAI], text:finalResult.text },
+        final: { ai:'bellai', model:'BELLAI 취합 엔진', text:finalResult.text },
         modelsUsed: models,
       });
     }
