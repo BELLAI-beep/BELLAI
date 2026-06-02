@@ -252,8 +252,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 /* MESSAGES */
 #messages{
-  flex:1;overflow-y:auto;padding:20px 20px 8px;
-  display:none;flex-direction:column;gap:14px;
+  flex:1;overflow-y:auto;padding:16px 20px 8px;
+  display:none;flex-direction:column;gap:10px;
   scroll-behavior:smooth;
 }
 #messages::-webkit-scrollbar{width:3px}
@@ -276,8 +276,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .msg-meta{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px;font-family:var(--mono)}
 .msg.user .msg-meta{justify-content:flex-end}
 .bubble{
-  padding:11px 15px;border-radius:12px;
-  font-size:14px;line-height:1.7;
+  padding:10px 14px;border-radius:12px;
+  font-size:14px;line-height:1.6;
   white-space:pre-wrap;word-break:break-word;
 }
 .msg.user .bubble{
@@ -308,7 +308,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 }
 .compare-ai-head{display:flex;align-items:center;gap:7px;margin-bottom:8px}
 .compare-ai-name{font-size:12px;font-weight:500;font-family:var(--mono)}
-.compare-text{font-size:13px;line-height:1.7;color:var(--text2);white-space:pre-wrap}
+.compare-text{font-size:13px;line-height:1.6;color:var(--text2);white-space:pre-wrap}
 .compare-best{
   background:rgba(124,106,247,.08);border:1px solid rgba(124,106,247,.25);
   border-radius:var(--radius);padding:12px 14px;margin-top:4px;
@@ -447,17 +447,21 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .debate-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
 .debate-card-head{display:flex;align-items:center;gap:6px;margin-bottom:6px}
 .debate-card-name{font-size:11px;font-weight:500;font-family:var(--mono)}
-.debate-card-text{font-size:12px;line-height:1.6;color:var(--text2);white-space:pre-wrap;max-height:120px;overflow-y:auto}
+.debate-card-text{font-size:12px;line-height:1.55;color:var(--text2);white-space:pre-wrap;max-height:120px;overflow-y:auto}
 .debate-card-text::-webkit-scrollbar{width:2px}
 .debate-card-text::-webkit-scrollbar-thumb{background:var(--border2)}
 .debate-review{display:flex;flex-direction:column;gap:4px}
 .review-card{background:var(--bg3);border-left:2px solid;border-radius:0 8px 8px 0;padding:8px 12px}
 .review-card-head{font-size:11px;font-weight:500;font-family:var(--mono);margin-bottom:4px}
-.review-card-text{font-size:12px;line-height:1.6;color:var(--text2);white-space:pre-wrap}
+.review-card-text{font-size:12px;line-height:1.55;color:var(--text2);white-space:pre-wrap}
+.rebuttal-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px}
+.rebuttal-card{background:var(--bg3);border:1px solid;border-radius:8px;padding:10px 12px}
+.rebuttal-card-head{font-size:11px;font-weight:500;font-family:var(--mono);margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.rebuttal-card-text{font-size:12px;line-height:1.55;color:var(--text2);white-space:pre-wrap}
 .final-answer{background:linear-gradient(135deg,rgba(124,106,247,.08),rgba(192,132,252,.05));border:1px solid rgba(124,106,247,.3);border-radius:10px;padding:14px 16px}
 .final-label{display:flex;align-items:center;gap:6px;font-size:12px;color:#a78bfa;font-family:var(--mono);font-weight:500;margin-bottom:10px}
 .final-label i{font-size:14px}
-.final-text{font-size:14px;line-height:1.75;color:var(--text);white-space:pre-wrap}
+.final-text{font-size:14px;line-height:1.6;color:var(--text);white-space:pre-wrap}
 .progress-bar{height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin:4px 0}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--claude));border-radius:2px;transition:width .4s ease}
 .stage-indicator{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12px;color:var(--text2);font-family:var(--mono)}
@@ -465,25 +469,26 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 @keyframes pulse2{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 
 
-/* 마크다운 렌더링 */
-.bubble.md-rendered p{margin-bottom:8px}
+/* 마크다운 렌더링 — 간격 최적화 */
+.bubble.md-rendered{line-height:1.6}
+.bubble.md-rendered p{margin-bottom:4px}
 .bubble.md-rendered p:last-child{margin-bottom:0}
-.bubble.md-rendered h1,.bubble.md-rendered h2,.bubble.md-rendered h3{font-weight:600;margin:10px 0 6px;color:var(--text)}
+.bubble.md-rendered h1,.bubble.md-rendered h2,.bubble.md-rendered h3{font-weight:600;margin:8px 0 4px;color:var(--text)}
 .bubble.md-rendered h1{font-size:16px}
 .bubble.md-rendered h2{font-size:15px}
 .bubble.md-rendered h3{font-size:14px}
-.bubble.md-rendered ul,.bubble.md-rendered ol{padding-left:18px;margin:6px 0}
-.bubble.md-rendered li{margin-bottom:3px;line-height:1.6}
-.bubble.md-rendered code:not(pre code){background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:12px;color:#e2e8f0}
-.bubble.md-rendered pre{background:#0d1117;border:1px solid var(--border);border-radius:8px;margin:8px 0;overflow:hidden}
-.bubble.md-rendered pre code{font-size:12px;line-height:1.6;padding:12px 14px;display:block;overflow-x:auto}
-.bubble.md-rendered blockquote{border-left:3px solid var(--accent);padding:6px 12px;margin:6px 0;background:rgba(124,106,247,.06);border-radius:0 6px 6px 0;color:var(--text2)}
-.bubble.md-rendered table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}
-.bubble.md-rendered th{background:var(--bg4);padding:7px 10px;border:1px solid var(--border);text-align:left;font-weight:500}
-.bubble.md-rendered td{padding:6px 10px;border:1px solid var(--border)}
+.bubble.md-rendered ul,.bubble.md-rendered ol{padding-left:16px;margin:3px 0}
+.bubble.md-rendered li{margin-bottom:2px;line-height:1.55}
+.bubble.md-rendered code:not(pre code){background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:12px;color:#e2e8f0}
+.bubble.md-rendered pre{background:#0d1117;border:1px solid var(--border);border-radius:8px;margin:6px 0;overflow:hidden}
+.bubble.md-rendered pre code{font-size:12px;line-height:1.5;padding:10px 12px;display:block;overflow-x:auto}
+.bubble.md-rendered blockquote{border-left:3px solid var(--accent);padding:4px 10px;margin:4px 0;background:rgba(124,106,247,.06);border-radius:0 6px 6px 0;color:var(--text2)}
+.bubble.md-rendered table{width:100%;border-collapse:collapse;margin:6px 0;font-size:13px}
+.bubble.md-rendered th{background:var(--bg4);padding:5px 8px;border:1px solid var(--border);text-align:left;font-weight:500}
+.bubble.md-rendered td{padding:4px 8px;border:1px solid var(--border)}
 .bubble.md-rendered strong{font-weight:600;color:var(--text)}
 .bubble.md-rendered a{color:#60a5fa;text-decoration:underline}
-.bubble.md-rendered hr{border:none;border-top:1px solid var(--border);margin:10px 0}
+.bubble.md-rendered hr{border:none;border-top:1px solid var(--border);margin:6px 0}
 
 /* 액션 버튼 */
 .msg-actions{display:flex;gap:4px;margin-top:5px;opacity:0;transition:opacity .15s}
@@ -1873,7 +1878,7 @@ function updateProgress(el, text, pct) {
 function removeProgress(el) { if(el) el.remove(); }
 
 // ── DEBATE RESULT ──
-function addDebateResult(round1, round2, final) {
+function addDebateResult(round1, round2, round3, final) {
   const wrap = document.createElement('div');
   wrap.className = 'msg bot';
   wrap.style.maxWidth = '95%';
@@ -1889,15 +1894,15 @@ function addDebateResult(round1, round2, final) {
 
   const meta = document.createElement('div');
   meta.className = 'msg-meta';
-  meta.innerHTML = `<span style="color:#a78bfa">토론 결과</span><span>${now()}</span>`;
+  meta.innerHTML = `<span style="color:#a78bfa">⚡ BELLAI 토론 결과</span><span>${now()}</span>`;
   col.appendChild(meta);
 
   const cw = document.createElement('div');
 
-  // 1단계 카드들
+  // ── 1라운드: 독립 답변 ──
   const lbl1 = document.createElement('div');
   lbl1.className = 'debate-step-label';
-  lbl1.textContent = '1단계 · 독립 답변';
+  lbl1.textContent = '1라운드 · 독립 답변';
   cw.appendChild(lbl1);
 
   const grid = document.createElement('div');
@@ -1917,21 +1922,22 @@ function addDebateResult(round1, round2, final) {
   });
   cw.appendChild(grid);
 
-  // 2단계 검토
-  if (round2 && round2.length > 0) {
+  // ── 2라운드: 반박·보완 ──
+  const validR2 = (round2 || []).filter(r => r.ok !== false && r.text && r.text !== '검토 생략');
+  if (validR2.length > 0) {
     const lbl2 = document.createElement('div');
     lbl2.className = 'debate-step-label';
-    lbl2.textContent = '2단계 · 상호 검토';
+    lbl2.textContent = '2라운드 · 반박·보완';
     cw.appendChild(lbl2);
     const rv = document.createElement('div');
     rv.className = 'debate-review';
-    round2.forEach(r => {
+    validR2.forEach(r => {
       const cfg = AI_CONFIG[r.ai];
       const card = document.createElement('div');
       card.className = 'review-card';
       card.style.borderColor = cfg.color;
       card.innerHTML = `
-        <div class="review-card-head" style="color:${cfg.color}">${cfg.name} 검토</div>
+        <div class="review-card-head" style="color:${cfg.color}">${cfg.name} 반박·보완</div>
         <div class="review-card-text">${escHtml(r.text)}</div>
       `;
       rv.appendChild(card);
@@ -1939,11 +1945,37 @@ function addDebateResult(round1, round2, final) {
     cw.appendChild(rv);
   }
 
-  // 최종 답변
-  const lbl3 = document.createElement('div');
-  lbl3.className = 'debate-step-label';
-  lbl3.textContent = '최종 도출';
-  cw.appendChild(lbl3);
+  // ── 3라운드: 재반론·최종 입장 ──
+  const validR3 = (round3 || []).filter(r => r.ok !== false && r.text);
+  if (validR3.length > 0) {
+    const lbl3 = document.createElement('div');
+    lbl3.className = 'debate-step-label';
+    lbl3.textContent = '3라운드 · 재반론·최종 입장';
+    cw.appendChild(lbl3);
+    const rw = document.createElement('div');
+    rw.className = 'rebuttal-wrap';
+    validR3.forEach(r => {
+      const cfg = AI_CONFIG[r.ai];
+      const card = document.createElement('div');
+      card.className = 'rebuttal-card';
+      card.style.borderColor = cfg.color + '60';
+      card.innerHTML = `
+        <div class="rebuttal-card-head" style="color:${cfg.color}">
+          <div class="ai-icon ${cfg.cls}" style="width:16px;height:16px;font-size:9px">${cfg.icon}</div>
+          ${cfg.name} 최종 입장
+        </div>
+        <div class="rebuttal-card-text">${escHtml(r.text)}</div>
+      `;
+      rw.appendChild(card);
+    });
+    cw.appendChild(rw);
+  }
+
+  // ── BELLAI 최종 취합 ──
+  const lblF = document.createElement('div');
+  lblF.className = 'debate-step-label';
+  lblF.textContent = 'BELLAI 최종 도출';
+  cw.appendChild(lblF);
 
   const fa = document.createElement('div');
   fa.className = 'final-answer';
@@ -1954,10 +1986,27 @@ function addDebateResult(round1, round2, final) {
   setTimeout(() => addCodeCopyBtns(fa), 0);
   cw.appendChild(fa);
 
+  // 복사 버튼
+  const actions = document.createElement('div');
+  actions.className = 'msg-actions';
+  actions.style.opacity = '1';
+  actions.innerHTML = `<button class="act-btn" onclick="copyDebateFinal(this)" title="최종 답변 복사"><i class="ti ti-copy"></i> 복사</button>`;
+  cw.appendChild(actions);
+
   col.appendChild(cw);
   wrap.appendChild(ava); wrap.appendChild(col);
   $('messages').appendChild(wrap);
   $('messages').scrollTop = $('messages').scrollHeight;
+}
+
+function copyDebateFinal(btn) {
+  const finalEl = btn.closest('.col').querySelector('.final-text');
+  if (!finalEl) return;
+  navigator.clipboard.writeText(finalEl.textContent).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = '<i class="ti ti-check"></i> 복사됨';
+    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<i class="ti ti-copy"></i> 복사'; }, 1500);
+  });
 }
 
 function addCompareResult(results, best) {
@@ -2278,17 +2327,16 @@ async function sendMessage() {
   conv.ais = [...activeAIs];
   clearAttached();
 
-  // DEBATE MODE (토론 → 검토 → 최종 도출)
+  // DEBATE MODE (1독립 → 2반박 → 3재반론 → BELLAI취합)
   if (compareMode && activeAIs.filter(id=>keys[id]).length > 1) {
     const validAIs = [...activeAIs];
     const msgs = conv.history.slice(0,-1).map(m=>({role:m.role,content:m.content}));
     msgs.push({role:'user',content:finalContent});
 
-    // 진행 상태 표시
     const progressEl = addProgress();
 
-    // ━━ 1단계: 병렬 독립 답변 ━━
-    updateProgress(progressEl, '1단계: AI 독립 답변 수집 중...', 20);
+    // ━━ 1라운드: 독립 답변 ━━
+    updateProgress(progressEl, '1라운드: AI 독립 답변 수집 중...', 15);
     const round1 = await Promise.all(
       validAIs.map(async aiId => {
         try {
@@ -2301,40 +2349,60 @@ async function sendMessage() {
     );
     const validR1 = round1.filter(r=>r.ok);
 
-    // ━━ 2단계: 병렬 상호 검토 ━━
+    // ━━ 2라운드: 상호 반박·보완 ━━
     let round2 = [];
     if (validR1.length > 1) {
-      updateProgress(progressEl, '2단계: AI 상호 검토 및 보완 중...', 55);
-      const othersText = validR1.map(r=>`[${AI_CONFIG[r.ai].name}의 답변]\n${r.text}`).join('\n\n');
+      updateProgress(progressEl, '2라운드: AI 상호 반박·보완 중...', 40);
       round2 = await Promise.all(
         validR1.map(async r => {
-          const reviewPrompt = `다음은 "${finalContent}"라는 질문에 대한 여러 AI의 답변입니다.\n\n${othersText}\n\n당신(${AI_CONFIG[r.ai].name})의 관점에서 다른 AI 답변과 비교하여: 1) 동의하는 부분 2) 보완할 점 3) 추가 인사이트를 간결하게 제시하세요. (150자 이내)`;
+          const othersText = validR1
+            .filter(o => o.ai !== r.ai)
+            .map(o => `[${AI_CONFIG[o.ai].name} 답변]\n${o.text}`)
+            .join('\n\n');
+          const reviewPrompt = `[원래 질문]\n${finalContent}\n\n[다른 AI들의 답변]\n${othersText}\n\n위 답변들을 검토하고: 1) 오류나 부정확한 부분 지적 2) 동의하는 핵심 인정 3) 본인만의 추가 인사이트 제시 (200자 이내)`;
           try {
             const rv = await callAI(r.ai, [{role:'user',content:reviewPrompt}], false);
-            return { ai:r.ai, text:rv.text };
+            return { ai:r.ai, text:rv.text, ok:true };
           } catch(e) {
-            return { ai:r.ai, text:'검토 생략' };
+            return { ai:r.ai, text:'검토 생략', ok:false };
           }
         })
       );
     }
 
-    // ━━ 3단계: 스마트 라우팅으로 최적 AI가 도출 ━━
-    updateProgress(progressEl, '3단계: 최적 답변 도출 중...', 85);
+    // ━━ 3라운드: 재반론·최종 입장 ━━
+    let round3 = [];
+    if (round2.filter(r=>r.ok).length > 1) {
+      updateProgress(progressEl, '3라운드: 재반론·최종 입장 정리 중...', 65);
+      round3 = await Promise.all(
+        validR1.map(async r => {
+          const reviewsOnMe = round2
+            .filter(rv => rv.ai !== r.ai && rv.ok)
+            .map(rv => `[${AI_CONFIG[rv.ai].name}의 검토]\n${rv.text}`)
+            .join('\n\n');
+          if (!reviewsOnMe) return { ai:r.ai, text:'', ok:false };
+          const rebuttalPrompt = `[나의 원래 답변]\n${r.text}\n\n[다른 AI들의 검토·반박]\n${reviewsOnMe}\n\n타당한 지적은 수용하고, 동의할 수 없는 부분은 근거를 들어 재반론하여 최종 입장을 한 문단으로 정리하세요. (150자 이내)`;
+          try {
+            const rv = await callAI(r.ai, [{role:'user',content:rebuttalPrompt}], false);
+            return { ai:r.ai, text:rv.text, ok:true };
+          } catch(e) {
+            return { ai:r.ai, text:'', ok:false };
+          }
+        })
+      );
+    }
+
+    // ━━ BELLAI 최종 취합 ━━
+    updateProgress(progressEl, 'BELLAI 최종 취합 중...', 85);
     const route = smartRoute(text || finalContent, validAIs);
     const synthAI = keys[route.ai] ? route.ai : validAIs.find(id=>keys[id]);
     let final = null;
     try {
-      const debateSummary = [
-        `[원래 질문] ${finalContent}`,
-        `\n[1단계 - 각 AI 독립 답변]`,
-        ...validR1.map(r=>`${AI_CONFIG[r.ai].name}: ${r.text}`),
-        round2.length ? `\n[2단계 - 상호 검토]` : '',
-        ...round2.map(r=>`${AI_CONFIG[r.ai].name} 검토: ${r.text}`)
-      ].filter(Boolean).join('\n');
-
-      const finalPrompt = `위의 AI들의 토론 내용을 바탕으로, 가장 정확하고 완전하며 실용적인 최종 답변을 한국어로 작성하세요. 각 AI의 좋은 점을 통합하고 오류는 제거하여 명확한 하나의 답변을 도출하세요.\n\n${debateSummary}`;
-      const fr = await callAI(synthAI, [{role:'user',content:finalPrompt}], false);
+      const r1Summary = validR1.map(r=>`${AI_CONFIG[r.ai].name} 독립 답변:\n${r.text}`).join('\n\n');
+      const r2Summary = round2.filter(r=>r.ok).map(r=>`${AI_CONFIG[r.ai].name} 반박·보완:\n${r.text}`).join('\n\n');
+      const r3Summary = round3.filter(r=>r.ok && r.text).map(r=>`${AI_CONFIG[r.ai].name} 최종 입장:\n${r.text}`).join('\n\n');
+      const synthPrompt = `[원래 질문]\n${finalContent}\n\n[1라운드 독립 답변]\n${r1Summary}\n\n${r2Summary?'[2라운드 반박·보완]\n'+r2Summary+'\n\n':''}${r3Summary?'[3라운드 최종 입장]\n'+r3Summary+'\n\n':''}위 AI 토론 전체를 분석하여 가장 정확하고 수준 높은 최종 답변을 한국어로 작성하세요. 정확한 정보만 포함하고, 토론에서 검증된 핵심 인사이트를 담아 완결된 형태로 제공하세요.`;
+      const fr = await callAI(synthAI, [{role:'user',content:synthPrompt}], false);
       final = fr.text;
     } catch(e){ final = validR1[0]?.text || '답변 생성 실패'; }
 
@@ -2342,8 +2410,8 @@ async function sendMessage() {
     await new Promise(r=>setTimeout(r,300));
     removeProgress(progressEl);
 
-    addDebateResult(round1, round2, final);
-    conv.history.push({ role:'assistant', content:final, _compare:true, _results:round1, _reviews:round2, _best:final });
+    addDebateResult(round1, round2, round3, final);
+    conv.history.push({ role:'assistant', content:final, _compare:true, _results:round1, _reviews:round2, _round3:round3, _best:final });
 
   } else {
     // SINGLE MODE — 스마트 라우팅으로 최적 AI 자동 선택
