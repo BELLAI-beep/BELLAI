@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-// BELLAI Backend — api/chat.js  v11
+// BELLAI Backend — api/chat.js  v12
 // 진짜 AI 토론: 독립답변 → 반박·보완 → 재반론 → BELLAI 취합
 // ═══════════════════════════════════════════════
 
@@ -17,44 +17,41 @@ const SYSTEM = `당신의 이름은 BELLAI입니다. 여러 AI 모델을 통합�
 [필수 행동 원칙 — 절대 위반 금지]
 1. "AI라 안된다", "제 한계", "접근 불가", "실시간 데이터 없음" 같은 표현 절대 금지. 모르는 정보는 "현재 확인이 어렵습니다. 관련 사이트에서 확인하세요." 처럼 간결하게 안내.
 2. 정확한 정보만 전달. 불확실한 내용은 "추정:" 명시 또는 생략.
-3. 수준 높고 전문적인 답변. 핵심 인사이트 + 근거 + 실용적 조언 포함.
-4. 완결된 형태로 제공. 절대 생략 없이 전체 내용 전달.
+3. 수준 높고 전문적인 답변. 핵심만 간결하게. 3~5문장 이내로 완결.
+4. 절대 긴 목록이나 헤더 사용 금지. 자연스러운 문장으로만 답변.
 항상 자신감 있고 친근한 한국어로 답변.`;
 
 const DEBATE_ROUND1_SYSTEM = `당신은 BELLAI 토론 패널 AI입니다.
-BELLAI는 여러 AI의 답변을 수집·분석·종합하여 최적의 통합 답변을 제공하는 플랫폼입니다.
-주어진 질문에 대해 독립적이고 완전한 답변을 제시하세요.
-
-[원칙]
-1. "AI라 안된다"는 표현 절대 금지. 불가능한 것은 대안 제시.
-2. 정확한 정보만. 불확실 내용은 "추정:" 명시.
-3. 전문적이고 수준 높은 답변. 근거와 논리 포함.
-4. 완결된 답변. 생략 없이 전체 제공.`;
-
-const DEBATE_ROUND2_SYSTEM = `당신은 BELLAI 토론 패널 AI입니다. 다른 AI의 답변을 읽고 비판적으로 검토하는 단계입니다.
-
-[원칙]
-1. 다른 AI 답변의 오류나 부정확한 부분을 구체적으로 지적하세요.
-2. 동의하는 핵심 내용은 명확히 인정하세요.
-3. 본인만의 추가 인사이트나 보완점을 제시하세요.
-4. 근거 기반으로 논리적으로 작성하세요. 200자 이내.`;
-
-const DEBATE_ROUND3_SYSTEM = `당신은 BELLAI 토론 패널 AI입니다. 상대 AI의 검토·반박을 받고 최종 입장을 정리하는 단계입니다.
-
-[원칙]
-1. 상대의 지적이 타당하면 수용하고 입장을 수정하세요.
-2. 동의할 수 없는 부분은 근거를 들어 재반론하세요.
-3. 최종 입장을 명확하게 한 문단으로 정리하세요. 150자 이내.`;
-
-const SYNTH_SYSTEM = `당신은 BELLAI 취합 엔진입니다.
-BELLAI의 핵심 역할: 여러 AI의 답변을 수집 → 공통점·차이점 분석 → 신뢰도 높은 정보 선별 → 실용적 조언 추가 → 최적의 통합 답변 1개 도출.
-AI들의 3단계 토론 전체를 분석해 최고 품질의 최종 답변을 생성합니다.
+주어진 질문에 대해 독립적이고 완전한 답변을 3~5문장으로 간결하게 제시하세요.
 
 [원칙]
 1. "AI라 안된다"는 표현 절대 금지.
-2. 각 AI 답변에서 정확하고 신뢰도 높은 정보만 선별해 종합.
-3. 단순 요약이 아닌 인사이트가 담긴 수준 높은 결론 도출.
-4. 전체 내용 완결된 형태로 제공. 절대 생략 없이.`;
+2. 정확한 정보만. 불확실 내용은 "추정:" 명시.
+3. 헤더, 목록 사용 금지. 자연스러운 문장으로만.
+4. 3~5문장 이내 완결.`;
+
+const DEBATE_ROUND2_SYSTEM = `당신은 BELLAI 토론 패널 AI입니다. 다른 AI의 답변을 읽고 비판적으로 검토하세요.
+
+[원칙]
+1. 오류나 부정확한 부분을 한 문장으로 지적.
+2. 동의하는 핵심을 한 문장으로 인정.
+3. 추가 인사이트를 한 문장으로 제시.
+총 3문장 이내.`;
+
+const DEBATE_ROUND3_SYSTEM = `당신은 BELLAI 토론 패널 AI입니다. 상대 AI의 검토를 받고 최종 입장을 정리하세요.
+
+[원칙]
+1. 타당한 지적은 수용, 아니면 재반론.
+2. 최종 입장 1~2문장으로만 정리.`;
+
+const SYNTH_SYSTEM = `당신은 BELLAI 취합 엔진입니다.
+AI들의 토론 전체를 분석해 최고 품질의 최종 답변을 생성합니다.
+
+[원칙]
+1. "AI라 안된다"는 표현 절대 금지.
+2. 정확하고 신뢰도 높은 정보만 선별해 종합.
+3. 전체 답변 5문장 이내. 헤더, 목록, 줄바꿈 최소화.
+4. 자연스러운 문장으로 흐르게 작성. 마지막에 한 줄 실용 조언.`;
 
 // ── 모델 캐시 ──
 let modelCache = {
@@ -73,6 +70,9 @@ const GPT_PRIORITY      = ['gpt-5','gpt-4.5','gpt-4o-latest','gpt-4o-2025','gpt-
 const GROQ_PRIORITY     = ['llama-4','llama3-70b','llama-3.3-70b-versatile','llama-3.1-70b-versatile','mixtral-8x7b-32768'];
 const GROK_PRIORITY     = ['grok-4','grok-3','grok-2','grok-latest'];
 const DEEPSEEK_PRIORITY = ['deepseek-r2','deepseek-v3','deepseek-chat','deepseek-reasoner'];
+
+// 웹서치가 가능한 AI 목록
+const SEARCH_CAPABLE = ['claude', 'gpt'];
 
 // ════════════════════════════════════════════════
 // 자동 모델 감지
@@ -116,6 +116,13 @@ async function detectLatestModels() {
   return updated;
 }
 
+// ── 실시간 데이터 필요 여부 판단 ──
+function needsRealtime(question) {
+  const q = (question || '').toLowerCase();
+  const keywords = ['날씨','기온','강수','비','눈','바람','미세먼지','오늘','지금','현재','실시간','뉴스','주가','환율','속보'];
+  return keywords.some(k => q.includes(k));
+}
+
 // ── 스마트 라우팅 ──
 function smartRoute(question, availableAIs) {
   const q = (question || '').toLowerCase();
@@ -144,7 +151,7 @@ function extractText(content) {
 async function callClaude(messages, models, useSearch = false, sys = SYSTEM) {
   const key = process.env.CLAUDE_API_KEY;
   if (!key) throw new Error('Claude API 키 미설정');
-  const body = { model: models.claude, max_tokens: 2000, system: sys, messages };
+  const body = { model: models.claude, max_tokens: 1500, system: sys, messages };
   if (useSearch) body.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -164,7 +171,7 @@ async function callGPT(messages, models, sys = SYSTEM) {
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({ model: models.gpt, messages: msgs, max_tokens: 2000 }),
+    body: JSON.stringify({ model: models.gpt, messages: msgs, max_tokens: 1500 }),
   });
   const d = await res.json();
   if (d.error) throw new Error(d.error.message);
@@ -176,7 +183,7 @@ async function callOpenAICompat(messages, model, baseURL, key, sys = SYSTEM) {
   const res = await fetch(`${baseURL}/chat/completions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-    body: JSON.stringify({ model, messages: msgs, max_tokens: 2000 }),
+    body: JSON.stringify({ model, messages: msgs, max_tokens: 1500 }),
   });
   const d = await res.json();
   if (d.error) throw new Error(d.error.message || JSON.stringify(d.error));
@@ -231,26 +238,38 @@ export default async function handler(req, res) {
     const { mode, messages, aiId, activeAIs, useSearch, question } = req.body;
     const validAIs = (activeAIs || available).filter(id => available.includes(id));
 
+    // 실시간 정보 필요 여부 판단
+    const isRealtime = needsRealtime(question);
+    // 실시간 질문이면 웹서치 가능한 AI만 1라운드에 참여
+    const debateAIs = isRealtime
+      ? validAIs.filter(id => SEARCH_CAPABLE.includes(id))
+      : validAIs;
+    // 웹서치 가능 AI가 없으면 전체 사용
+    const finalDebateAIs = debateAIs.length >= 1 ? debateAIs : validAIs;
+
     // ── 단일 모드 ──
     if (mode === 'single') {
       const selectedAI = aiId || smartRoute(question, validAIs);
-      const result = await callAI(selectedAI, messages, models, useSearch && selectedAI === 'claude', SYSTEM);
+      const doSearch = (useSearch || isRealtime) && selectedAI === 'claude';
+      const result = await callAI(selectedAI, messages, models, doSearch, SYSTEM);
       return res.json({ mode:'single', ai:selectedAI, model:models[selectedAI], text:result.text, searched:result.searched });
     }
 
-    // ── 토론 모드 (3라운드 진짜 토론) ──
+    // ── 토론 모드 ──
     if (mode === 'debate') {
-      if (validAIs.length < 2) {
-        const result = await callAI(validAIs[0], messages, models, useSearch, SYSTEM);
-        return res.json({ mode:'single', ai:validAIs[0], model:models[validAIs[0]], text:result.text, searched:result.searched });
+      if (finalDebateAIs.length < 2) {
+        const doSearch = (useSearch || isRealtime) && finalDebateAIs[0] === 'claude';
+        const result = await callAI(finalDebateAIs[0], messages, models, doSearch, SYSTEM);
+        return res.json({ mode:'single', ai:finalDebateAIs[0], model:models[finalDebateAIs[0]], text:result.text, searched:result.searched });
       }
 
-      // ━━ 1라운드: 독립 답변 ━━
+      // ━━ 1라운드: 독립 답변 (실시간 질문 시 claude는 웹서치 사용) ━━
       const round1 = await Promise.all(
-        validAIs.map(async id => {
+        finalDebateAIs.map(async id => {
           try {
-            const r = await callAI(id, messages, models, useSearch && id==='claude', DEBATE_ROUND1_SYSTEM);
-            return { ai:id, model:models[id], text:r.text, ok:true };
+            const doSearch = (useSearch || isRealtime) && id === 'claude';
+            const r = await callAI(id, messages, models, doSearch, DEBATE_ROUND1_SYSTEM);
+            return { ai:id, model:models[id], text:r.text, ok:true, searched:r.searched };
           } catch(e) {
             return { ai:id, model:models[id], text:`오류: ${e.message}`, ok:false };
           }
@@ -263,12 +282,11 @@ export default async function handler(req, res) {
       if (validR1.length > 1) {
         round2 = await Promise.all(
           validR1.map(async r => {
-            // 자신을 제외한 다른 AI들의 답변만 전달
             const othersText = validR1
               .filter(o => o.ai !== r.ai)
-              .map(o => `[${o.ai.toUpperCase()} 답변]\n${o.text}`)
+              .map(o => `[${o.ai.toUpperCase()}]\n${o.text}`)
               .join('\n\n');
-            const prompt = `[원래 질문]\n${question}\n\n[다른 AI들의 답변]\n${othersText}\n\n위 답변들을 검토하고: 1) 오류나 부정확한 부분 지적 2) 동의하는 핵심 인정 3) 본인만의 추가 인사이트 제시`;
+            const prompt = `[질문] ${question}\n\n[다른 AI 답변]\n${othersText}\n\n오류 지적(1문장), 동의(1문장), 추가 인사이트(1문장)으로 검토하세요.`;
             try {
               const rv = await callAI(r.ai, [{ role:'user', content:prompt }], models, false, DEBATE_ROUND2_SYSTEM);
               return { ai:r.ai, text:rv.text, ok:true };
@@ -284,13 +302,12 @@ export default async function handler(req, res) {
       if (round2.filter(r=>r.ok).length > 1) {
         round3 = await Promise.all(
           validR1.map(async r => {
-            // 자신에 대한 다른 AI들의 검토 내용 수집
             const reviewsOnMe = round2
               .filter(rv => rv.ai !== r.ai && rv.ok)
-              .map(rv => `[${rv.ai.toUpperCase()}의 검토]\n${rv.text}`)
+              .map(rv => `[${rv.ai.toUpperCase()}]\n${rv.text}`)
               .join('\n\n');
             if (!reviewsOnMe) return { ai:r.ai, text:'', ok:false };
-            const prompt = `[나의 원래 답변]\n${r.text}\n\n[다른 AI들의 검토·반박]\n${reviewsOnMe}\n\n타당한 지적은 수용하고, 동의할 수 없는 부분은 근거를 들어 재반론하여 최종 입장을 정리하세요.`;
+            const prompt = `[내 답변] ${r.text}\n\n[검토] ${reviewsOnMe}\n\n최종 입장 1~2문장으로 정리하세요.`;
             try {
               const rv = await callAI(r.ai, [{ role:'user', content:prompt }], models, false, DEBATE_ROUND3_SYSTEM);
               return { ai:r.ai, text:rv.text, ok:true };
@@ -302,45 +319,30 @@ export default async function handler(req, res) {
       }
 
       // ━━ BELLAI 최종 취합 ━━
-      const r1Summary = validR1.map(r => `## ${r.ai.toUpperCase()} 독립 답변\n${r.text}`).join('\n\n');
-      const r2Summary = round2.filter(r=>r.ok).map(r => `## ${r.ai.toUpperCase()} 검토·반박\n${r.text}`).join('\n\n');
-      const r3Summary = round3.filter(r=>r.ok && r.text).map(r => `## ${r.ai.toUpperCase()} 최종 입장\n${r.text}`).join('\n\n');
+      const r1Summary = validR1.map(r => `[${r.ai.toUpperCase()}] ${r.text}`).join('\n\n');
+      const r2Summary = round2.filter(r=>r.ok).map(r => `[${r.ai.toUpperCase()}] ${r.text}`).join('\n');
+      const r3Summary = round3.filter(r=>r.ok && r.text).map(r => `[${r.ai.toUpperCase()}] ${r.text}`).join('\n');
 
-      const synthPrompt = `[원래 질문]
-${question}
+      const synthPrompt = `질문: ${question}
 
-[1라운드 — AI 독립 답변]
+1라운드 답변:
 ${r1Summary}
 
-${r2Summary ? '[2라운드 — 상호 반박·보완]\n' + r2Summary : ''}
+${r2Summary ? '2라운드 검토:\n' + r2Summary : ''}
+${r3Summary ? '3라운드 최종:\n' + r3Summary : ''}
 
-${r3Summary ? '[3라운드 — 재반론·최종 입장]\n' + r3Summary : ''}
-
-위 AI들의 3단계 토론 전체를 분석하여 최고 품질의 최종 답변을 작성하세요.
-정확한 정보만 포함하고, 불확실한 내용은 제거하거나 "추정:"으로 명시하세요.
-
----
-**BELLAI 최종 답변**
-
-[핵심 결론 — 명확하고 자신있게]
-
-[상세 설명 — 토론에서 도출된 가장 신뢰도 높은 내용 중심]
-
-[실용적 조언 또는 주의사항]
-
-**토론 핵심 요약**
-- AI들이 공통으로 동의한 내용: [핵심]
-- 토론을 통해 보완된 내용: [인사이트]
----`;
+위 토론을 분석해 최종 답변을 5문장 이내, 자연스러운 문장으로만 작성하세요. 헤더나 목록 사용 금지. 마지막 문장은 실용적 조언 한 줄.`;
 
       const finalResult = await callAI('claude', [{ role:'user', content:synthPrompt }], models, false, SYNTH_SYSTEM);
 
       return res.json({
         mode: 'debate',
+        realtimeMode: isRealtime,
+        searchCapableAIs: isRealtime ? finalDebateAIs : [],
         round1,
         round2: round2.filter(r=>r.ok),
         round3: round3.filter(r=>r.ok && r.text),
-        final: { ai:'bellai', model:'BELLAI 취합 엔진 v11', text:finalResult.text },
+        final: { ai:'bellai', model:'BELLAI 취합 엔진 v12', text:finalResult.text },
         modelsUsed: models,
       });
     }
