@@ -67,7 +67,6 @@
   --deepseek:#fb923c;--deepseek-bg:rgba(251,146,60,.12);
   --groq:#f472b6;--groq-bg:rgba(244,114,182,.12);
   --grok:#10b8d4;--grok-bg:rgba(16,184,212,.12);
-  --mistral:#ff7000;--mistral-bg:rgba(255,112,0,.12);
   --accent:#7c6af7;--accent2:#5b51d8;
   --radius:10px;--radius-sm:6px;
   --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
@@ -123,7 +122,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 }
 .conv-item:hover{background:var(--bg3)}
 .conv-item.active{background:var(--bg3);border-color:var(--border2)}
-.conv-ai-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.conv-ai-dot{width:28px;height:28px;border-radius:7px;flex-shrink:0;background:#0e0f11}
 .conv-info{flex:1;min-width:0}
 .conv-title{font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .conv-meta{font-size:11px;color:var(--text3);margin-top:1px}
@@ -356,8 +355,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .ai-toggle.on.deepseek{color:var(--deepseek);background:var(--deepseek-bg)}
 .ai-toggle.on.groq{color:var(--groq);background:var(--groq-bg)}
 .ai-toggle.on.grok{color:#10b8d4;background:rgba(16,184,212,.12)}
-.ai-toggle.on.mistral{color:#ff7000;background:rgba(255,112,0,.12)}
-.bubble.mistral-b{background:rgba(255,112,0,.07)}
 .bubble.grok-b{background:rgba(16,184,212,.07)}
 .ai-toggle .dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
 
@@ -907,7 +904,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
           </div>
         </div>
         <div class="api-input-row">
-          <input type="password" id="key-gemini" placeholder="AQ. 또는 AIza..." />
+          <input type="password" id="key-gemini" placeholder="AIza..." />
           <button class="save-btn" data-ai="gemini">저장</button>
         </div>
         <div class="api-card-status" id="status-gemini"><span class="status-no">● 미연결</span></div>
@@ -958,21 +955,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
         <div class="api-card-status" id="status-grok"><span class="status-no">● 미연결</span></div>
       </div>
 
-      <div class="api-card">
-        <div class="api-card-head">
-          <div class="ai-icon mistral" style="background:rgba(255,112,0,.12);color:#ff7000">Mi</div>
-          <div>
-            <div class="api-card-name">Mistral</div>
-            <div class="api-card-note">Mistral AI · 유럽·다국어 · <span style="color:#4ade80;font-size:10px">● 무료 1B토큰/월</span></div>
-          </div>
-        </div>
-        <div class="api-input-row">
-          <input type="password" id="key-mistral" placeholder="..." />
-          <button class="save-btn" data-ai="mistral">저장</button>
-        </div>
-        <div class="api-card-status" id="status-mistral"><span class="status-no">● 미연결</span></div>
-      </div>
-
     </div>
     <button class="setup-start-btn" id="startBtn">BELLAI 시작하기 →</button>
   </div>
@@ -1007,7 +989,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
         <button id="sendBtn" disabled><i class="ti ti-send"></i></button>
       </div>
     </div>
-    <div id="hint">Enter 전송 · Shift+Enter 줄바꿈 · <span id="compare-hint" style="color:#a78bfa;display:inline-flex;align-items:center;gap:4px"><svg width="13" height="13" viewBox="0 0 120 120" style="border-radius:3px;flex-shrink:0"><rect width="120" height="120" rx="26" fill="#0e0f11"/><circle cx="60" cy="14" r="8" fill="#c084fc"/><circle cx="103" cy="21" r="8" fill="#34d399"/><circle cx="106" cy="60" r="8" fill="#60a5fa"/><circle cx="103" cy="99" r="8" fill="#fb923c"/><circle cx="60" cy="106" r="8" fill="#f472b6"/><circle cx="60" cy="60" r="10" fill="white" opacity="0.95"/></svg> BELLAI 토론 모드 · AI들이 협력해 최선의 답변 도출</span></div>
+    <div id="hint">Enter 전송 · Shift+Enter 줄바꿈 · <span id="compare-hint" style="color:#a78bfa;display:inline-flex;align-items:center;gap:4px"><svg width="13" height="13" viewBox="0 0 120 120" style="border-radius:3px;flex-shrink:0"><rect width="120" height="120" rx="26" fill="#0e0f11"/><line x1="60" y1="60" x2="60" y2="14" stroke="#c084fc" stroke-width="2" opacity="0.8"/><line x1="60" y1="60" x2="103" y2="21" stroke="#34d399" stroke-width="2" opacity="0.8"/><line x1="60" y1="60" x2="106" y2="60" stroke="#60a5fa" stroke-width="2" opacity="0.8"/><line x1="60" y1="60" x2="103" y2="99" stroke="#fb923c" stroke-width="2" opacity="0.8"/><line x1="60" y1="60" x2="60" y2="106" stroke="#f472b6" stroke-width="2" opacity="0.8"/><circle cx="60" cy="14" r="8" fill="#c084fc"/><circle cx="103" cy="21" r="8" fill="#34d399"/><circle cx="106" cy="60" r="8" fill="#60a5fa"/><circle cx="103" cy="99" r="8" fill="#fb923c"/><circle cx="60" cy="106" r="8" fill="#f472b6"/><circle cx="60" cy="60" r="10" fill="white" opacity="0.95"/></svg> BELLAI 토론 모드 · AI들이 협력해 최선의 답변 도출</span></div>
   </div>
 
 </div>
@@ -1018,11 +1000,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 const AI_CONFIG = {
   claude:   { name:'Claude',    color:'#c084fc', cls:'claude',   icon:'C',  model:'claude-sonnet-latest',        specialty:['한국어','분석','추론','문서','창작','보고서'] },
   gpt:      { name:'GPT',       color:'#34d399', cls:'gpt',      icon:'G',  model:'gpt-4o',                      specialty:['코딩','프로그래밍','번역','수학','범용'] },
-  gemini:   { name:'Gemini',    color:'#60a5fa', cls:'gemini',   icon:'Ge', model:'gemini-2.5-flash',     specialty:['최신정보','뉴스','검색','트렌드','실시간'] },
+  gemini:   { name:'Gemini',    color:'#60a5fa', cls:'gemini',   icon:'Ge', model:'gemini-2.0-flash-latest',     specialty:['최신정보','뉴스','검색','트렌드','실시간'] },
   deepseek: { name:'DeepSeek',  color:'#fb923c', cls:'deepseek', icon:'DS', model:'deepseek-chat',               specialty:['논리','추론','수학','과학','계산'] },
   groq:     { name:'Groq',      color:'#f472b6', cls:'groq',     icon:'Gq', model:'llama-3.3-70b-versatile',     specialty:['빠른답변','요약','간단한질문','속도'] },
   grok:     { name:'Grok',      color:'#10b8d4', cls:'grok',     icon:'Gk', model:'grok-latest',                  specialty:['실시간정보','뉴스','트위터','웹검색','최신'] },
-  mistral:  { name:'Mistral',   color:'#ff7000', cls:'mistral',  icon:'Mi', model:'mistral-small-latest',         specialty:['유럽','다국어','번역','언어','GDPR'] },
 };
 
 // ── 역할 분담 자동 조합 ──
@@ -1701,7 +1682,7 @@ function renderSidebar(filter='') {
     item.className = 'conv-item'+(id===currentId?' active':'');
     item.dataset.id = id;
     item.innerHTML = `
-      <div class="conv-ai-dot" style="background:${firstAI?firstAI.color:'#5a6070'}"></div>
+      <canvas class="conv-ai-dot" width="28" height="28" style="border-radius:7px;background:#0e0f11"></canvas>
       <div class="conv-info">
         <div class="conv-title">${c.title}</div>
         <div class="conv-meta">${c.ais?c.ais.map(a=>AI_CONFIG[a]?.name||a).join(' · '):'AI'} · ${new Date(c.time).toLocaleDateString('ko-KR',{month:'short',day:'numeric'})}</div>
@@ -1709,6 +1690,8 @@ function renderSidebar(filter='') {
       <button class="conv-del" title="삭제"><i class="ti ti-x"></i></button>
     `;
     item.addEventListener('click', e => { if(!e.target.closest('.conv-del')) loadConv(id); });
+    const cvs = item.querySelector('.conv-ai-dot');
+    if(cvs) startConvAnim(cvs, firstAI ? firstAI.color : '#7c6af7');
     item.querySelector('.conv-del').addEventListener('click', e => { e.stopPropagation(); deleteConv(id); });
     list.appendChild(item);
   });
@@ -2181,6 +2164,58 @@ function initVoice() {
   return true;
 }
 
+
+// ══ 사이드바 대화목록 아이콘 애니메이션 ══
+function startConvAnim(canvas, mainColor) {
+  const W=28,H=28,CX=14,CY=14,R=9;
+  const COLORS=['#c084fc','#34d399','#60a5fa','#fb923c','#f472b6','#10b8d4'];
+  const NODES=[
+    {a:-90},{a:-30},{a:30},{a:90},{a:150},{a:210}
+  ];
+  const ctx=canvas.getContext('2d');
+  let phase=0,dir=1,tick=0;
+  function ha(h,a){
+    if(!h||h==='#ffffff')return `rgba(255,255,255,${a})`;
+    const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+  function eio(t){return t<0.5?2*t*t:-1+(4-2*t)*t;}
+  function lp(a,b,t){return a+(b-a)*t;}
+  function frame(){
+    tick++;
+    // 천천히 수축/팽창 (0.004 = 매우 느리게)
+    phase += dir * 0.004;
+    if(phase >= 1){phase=1;dir=-1;}
+    else if(phase <= 0){phase=0;dir=1;}
+    const p = eio(phase);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0e0f11';
+    ctx.beginPath();ctx.roundRect(0,0,W,H,7);ctx.fill();
+    // 노드 그리기 (선 없음)
+    NODES.forEach((n,i)=>{
+      const rad=n.a*Math.PI/180;
+      // 수축 시 중앙으로, 팽창 시 퍼짐
+      const nr=lp(R,2,p);
+      const nx=CX+nr*Math.cos(rad);
+      const ny=CY+nr*Math.sin(rad);
+      const nodeR=lp(2.2,1.2,p);
+      const al=lp(0.7,0.3,p);
+      ctx.beginPath();ctx.arc(nx,ny,nodeR,0,Math.PI*2);
+      ctx.fillStyle=ha(COLORS[i],al);ctx.fill();
+    });
+    // 중앙 허브
+    const hubR=lp(2,3.5,p);
+    const gr=ctx.createRadialGradient(CX,CY,0,CX,CY,hubR*2.5);
+    gr.addColorStop(0,`rgba(159,142,247,${lp(0.4,0.8,p)})`);
+    gr.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.beginPath();ctx.arc(CX,CY,hubR*2.5,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+    ctx.beginPath();ctx.arc(CX,CY,hubR,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${lp(0.7,1,p)})`;ctx.fill();
+    requestAnimationFrame(frame);
+  }
+  frame();
+}
+
 // ══ BELLAI 취합 애니메이션 로더 ══
 let loaderAnimId = null;
 
@@ -2207,15 +2242,15 @@ function startLoaderAnim(canvas) {
 
   function frame(){
     ctx.clearRect(0,0,W,H);
-    if(mode==='converging'){phase+=0.012;if(phase>=1){mode='burst';phase=0;}}
+    if(mode==='converging'){phase+=0.022;if(phase>=1){mode='burst';phase=0;}}
     else if(mode==='burst'){phase+=0.055;if(phase>=1){mode='expanding';phase=0;}}
-    else{phase+=0.012;if(phase>=1){mode='converging';phase=0;}}
+    else{phase+=0.022;if(phase>=1){mode='converging';phase=0;}}
     const p=eio(Math.min(phase,1));
 
     if(mode==='converging'){
       NODES.forEach(n=>{
         const[hx,hy]=pt(n.a),nx=lp(hx,CX,p),ny=lp(hy,CY,p);
-        // 선 제거됨
+        if(n.active){ctx.beginPath();ctx.moveTo(CX,CY);ctx.lineTo(nx,ny);ctx.strokeStyle=ha(n.c,.3*(1-p));ctx.lineWidth=1;ctx.stroke();}
         ctx.beginPath();ctx.arc(nx,ny,lp(W*.055,W*.02,p),0,Math.PI*2);
         ctx.fillStyle=ha(n.c,n.active?lp(.85,.4,p):(n.op||.3)*lp(1,.4,p));ctx.fill();
       });
@@ -2234,7 +2269,7 @@ function startLoaderAnim(canvas) {
     } else {
       NODES.forEach(n=>{
         const[hx,hy]=pt(n.a),nx=lp(CX,hx,p),ny=lp(CY,hy,p);
-        // 선 제거됨
+        if(n.active){ctx.beginPath();ctx.moveTo(CX,CY);ctx.lineTo(nx,ny);ctx.strokeStyle=ha(n.c,.3*p);ctx.lineWidth=1;ctx.stroke();}
         ctx.beginPath();ctx.arc(nx,ny,lp(W*.02,W*.055,p),0,Math.PI*2);
         ctx.fillStyle=ha(n.c,n.active?p*.85:(n.op||.3)*p);ctx.fill();
       });
@@ -2509,7 +2544,6 @@ $('userInput').addEventListener('input', () => {
 
 $('clearBtn').addEventListener('click', () => {
   if (!currentId) return;
-  if (!confirm('현재 대화를 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
   conversations[currentId].history = [];
   saveConvs();
   $('messages').innerHTML = '';
